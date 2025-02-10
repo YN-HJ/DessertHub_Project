@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>掲示板/コメント/ギャラリー管理</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/user/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+  <link rel="stylesheet" href="/css/user/manage.css">
+</head>
+
+<body>
+
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <nav th:replace="user/profile/profile-nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+  <div class="mypage-container">
+
+    <div class="container">
+      <div class="nav">
+        <div class="nav-buttons">
+          <button data-category="posts">掲示板</button>
+          <button data-category="gallery">ギャラリー</button>
+          <button data-category="comments">コメント</button>
+        </div>
+        <div class="nav-search">
+          <input type="text" id="searchInput" placeholder="検索">
+          <button id="searchBtn">検索</button>
+        </div>
+      </div>
+
+
+      <div id="postsContainer" class="list-container active">
+        <div class="item" th:each="board : ${boardList}">
+          <div class="item-details">
+            <a th:href="@{/board/{id}(id=${board.id})}" class="no-underline">
+              <h3 th:text="${board.boardTitle}">投稿タイトル</h3>
+              <p
+                th:text="${#strings.length(board.boardContent) > 10 ? #strings.substring(board.boardContent, 0, 10) + '...' : board.boardContent}">
+                投稿内容です。</p>
+            </a>
+          </div>
+          <div class="item-actions">
+            <a th:href="@{/board/{id}/edit(id=${board.id})}">
+              <button id="edit-post" class="edit-btn" th:if="${board.userId == session.userId}">編集</button>
+            </a>
+            <form th:action="@{/board/{id}/udelete(id=${board.id})}" method="post" style="display:inline;">
+              <button id="delete-post" class="delete-btn" type="submit"
+                th:if="${board.userId == session.userId}">削除</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ギャラリー -->
+      <div id="galleryContainer" class="list-container">
+        <div class="item" th:each="gallery : ${galleryList}">
+          <div class="item-details">
+            <a th:href="@{/gallery/gview/{id}(id=${gallery.id})}" class="no-underline">
+              <h3 th:text="${gallery.galleryTitle}"></h3>
+              <img th:src="${gallery.galleryImg}" alt="ギャラリー画像" style="width: 20%; border-radius: 8px;">
+            </a>
+          </div>
+
+          <div class="item-actions">
+            <form th:action="@{/gallery/{id}/udelete(id=${gallery.id})}" th:if="${session.userId == gallery.userId}"
+              method="post">
+              <button class="delete-btn" type="submit">削除</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- コメント -->
+      <div id="commentsContainer" class="list-container">
+        <div class="item" th:each="reply : ${replyList}">
+          <div class="item-details">
+            <a th:href="@{/board/{id}(id=${reply.boardId})}" class="no-underline">
+              <p
+                th:text="${#strings.length(reply.replyBody) > 10 ? #strings.substring(reply.replyBody, 0, 10) + '...' : reply.replyBody}">
+                コメント内容です。</p>
+            </a>
+          </div>
+          <div class="item-actions">
+            <form th:action="@{/board/{id}/udereply(id=${reply.id})}" th:if="${session.userId == reply.userId}"
+              method="post">
+              <button class="delete-btn" type="submit">削除</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  </div>
+
+  <!-- フッター -->
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+
+  <script>
+    const navButtons = document.querySelectorAll('.nav-buttons button');
+    const containers = document.querySelectorAll('.list-container');
+
+    navButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        containers.forEach(container => container.classList.remove('active'));
+        document.getElementById(button.dataset.category + 'Container').classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+
+</html>

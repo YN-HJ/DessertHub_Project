@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>おすすめスイーツギャラリー</title>
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/fragments/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      text-decoration: none;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #FF6B81;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    /* ギャラリー */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    /* カードデザイン */
+    .card {
+      background: linear-gradient(145deg, #FFD1DC, #FFB6C1);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(145deg, #FFB6C1, #FF8C94);
+    }
+
+    .card h3 {
+      font-size: 22px;
+      color: #FF6B81;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .card p {
+      font-size: 16px;
+      color: #555;
+    }
+
+    /* ボタンスタイル */
+    .button {
+      padding: 12px 24px;
+      background-color: #FF6B81;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 30px auto 0;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #FFA07A;
+      transform: scale(1.1);
+    }
+
+    /* 反応型デザイン */
+    @media (max-width: 768px) {
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ヘッダー -->
+  <header th:replace="fragments/header.html :: header"></header>
+
+    <!-- サイドバー -->
+    <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+    
+  <div class="main-layout" style="display: flex; justify-content: center; align-items: center;">
+
+    <div class="container">
+
+
+      <!-- タイトル -->
+      <h1>おすすめスイーツギャラリー</h1>
+
+      <!-- ギャラリー -->
+      <div class="gallery">
+
+        <!-- ランダム -->
+        <a href="/dessert/random-draw" class="card">
+          <h3>ランダム方式</h3>
+          <p>スイーツをランダムでおすすめします。</p>
+        </a>
+
+        <!-- トーナメント -->
+        <a href="/dessert/tournament" class="card">
+          <h3>トーナメント方式</h3>
+          <p>トーナメントで自分の中で一番のスイーツを選びます。</p>
+        </a>
+
+        <!-- 性格テスト -->
+        <a href="/dessert/personality-test" class="card">
+          <h3>性格テスト方式</h3>
+          <p>あなたの性格にピッタリなスイーツをおすすめします。</p>
+        </a>
+      </div>
+
+      <!-- 追加ボタン -->
+      <button class="button" onclick="alert('現在準備中です！')">もっと見る</button>
+
+    </div>
+
+    <!-- フッター -->
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+
+</body>
+
+</html>

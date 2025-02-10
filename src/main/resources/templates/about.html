@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dessert Hub</title>
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/fragments/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+  <link rel="stylesheet" href="/css/about.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <main>
+    <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+    <div class="center-content">
+      <nav class="top-nav">
+        <a href="javascript:void(0);" onclick="showSection('about', this)" class="active">About Us</a>
+        <a href="javascript:void(0);" onclick="showSection('team', this)">Meet Our Team</a>
+      </nav>
+
+      <!-- About Section -->
+      <div id="about" class="section about-section">
+        <h2>About Dessert Hub</h2>
+        <p>スイーツと共に歩んでいくコミュニティ、Dessert Hubです。</p>
+        <br>
+        <p> 様々なスイーツの情報を共有しましょう！</p>
+      </div>
+
+      <!-- Team Section -->
+      <div id="team" class="section team-section">
+        <h2>Meet Our Team</h2>
+        <div class="team-members">
+          <div class="team-member">
+            <img src="img/member/park.jpg" alt="Team Member 1" width="300px" height="auto">
+            <p>リーダー：パク ギョンレ</p><br>
+            <p></p>
+          </div>
+          <div class="team-member">
+            <img src="img/member/lee.jpeg" alt="Team Member 2" width="300px" height="auto">
+            <p>メンバー：イ ジヒョン</p>
+          </div>
+          <div class="team-member">
+            <img src="img/member/yun.jpeg" alt="Team Member 3" width="300px" height="auto">
+            <p>メンバー：ユン ヒョンジュン</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const defaultSection = document.querySelector('.top-nav a.active');
+      showSection('about', defaultSection);
+    });
+
+
+    function showSection(sectionId, element) {
+      // 全てのセクションを隠す
+      document.querySelectorAll('.section').forEach(function (section) {
+        section.style.display = 'none';
+      });
+
+      // 選択したセクションを表示
+      document.getElementById(sectionId).style.display = 'block';
+
+      // 全てのナビゲーションリンクから「active」クラスを除去
+      document.querySelectorAll('nav a').forEach(function (navLink) {
+        navLink.classList.remove('active');
+      });
+
+      // クリックしたリンクに「active」クラスを追加
+      element.classList.add('active');
+    }
+  </script>
+</body>
+
+</html>

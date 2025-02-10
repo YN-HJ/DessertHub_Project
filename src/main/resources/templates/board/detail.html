@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掲示板投稿</title>
+
+    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+    <link rel="stylesheet" href="/css/fragments/nav.css">
+    <link rel="stylesheet" href="/css/fragments/footer2.css">
+    <link rel="stylesheet" href="/css/board/detail.css">
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header th:replace="fragments/header.html :: header"></header>
+
+
+    <main>
+        <!-- サイドバー -->
+        <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+        <div class="container">
+            <div class="header">
+                <div class="category" id="post-category">
+                    <span th:if="${board.boardCategory == 'notice'}">お知らせ</span>
+                    <span th:if="${board.boardCategory == 'free'}">自由掲示板</span>
+                    <span th:if="${board.boardCategory == 'qna'}">Q&A</span>
+                </div>
+                <div class="title" id="post-title"><h1 th:text="${board.boardTitle}"></h1></div>
+
+                <div class="info" id="post-info">
+                    投稿者：<span th:text="${board.userNn}"></span> | 
+                    作成日時：<span th:text="${#temporals.format(board.boardWriteday, 'yyyy-MM-dd HH:mm')}"></span> | 閲覧数: <span th:text="${board.boardView}"></span> | 
+                    いいね：<span th:text="${board.boardLiked}"></span> | 
+                </div>
+
+                <div class="actions">
+                    <a href="/board"><button id="edit-post">リストへ</button></a>
+                    <a th:href="@{/board/{id}/edit(id=${board.id})}">
+                        <button id="edit-post" th:if="${board.userId == session.userId}">編集</button>
+                    </a>
+                    <form th:action="@{/board/{id}/delete(id=${board.id})}" method="post" style="display:inline;">
+                        <button id="delete-post" type="submit" th:if="${board.userId == session.userId}">削除</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 投稿の内容 -->
+            <div class="content" id="post-content">
+                <p th:text="${board.boardContent}"></p>
+            </div>
+
+            <div th:if="${board.boardImg}" style="display: flex; justify-content: center; align-items: center;">
+                <img th:src="${board.boardImg}" style="max-width: 70%; height: auto;" /> 
+            </div>
+
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <!-- いいねボタンの位置 -->
+                <button type="button" class="like-btn" th:id="likeBtn" th:gurl="${board.id}"
+                th:onclick="get_like(event, this.getAttribute('gurl'))">♥</button>
+                <button type="button" class="unlike-btn" th:id="unlikeBtn" 
+                th:gurl="${board.id}" th:onclick="get_unlike(event, this.getAttribute('gurl'))" style="display: none;">♥</button>
+            </div>
+            
+                
+
+            <!-- コメント -->
+            <div class="comments-container">
+                <h3>コメント (<span id="comment-count" th:text="${board.boardComment}"></span>)</h3>
+
+                <ul id="comment-list" class="comment-list">
+                    <li th:each="replyItem : ${replyList}">
+                        <span th:text="${replyItem.userNn} + '  :  ' + ${replyItem.replyBody}"></span>
+
+                        <form th:action="@{/board/{id}/dereply(id=${replyItem.id})}" th:if="${session.userId == replyItem.userId}" method="post">
+                            <button class="delete-btn" type="submit">削除</button>
+                        </form>
+                    </li>
+                </ul>
+                
+                <form id="replyForm" th:action="@{/board/{id}/reply(id=${board.id})}" th:object="${reply}" method="post">
+                    <div class="comment-input-div">
+                        <input class="comment-input" type="text" id="comment-input" th:field="*{replyBody}" placeholder="コメント入力">
+                        <button class="comment-button" id="add-comment" type="button" onclick="submit_reply()">登録</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- フッター -->
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js"></script>
+    
+    <!-- いいねボタンの初処理 -->
+    <script th:inline="javascript">
+        function init_like_set() {
+            /* [[${likeList}]]を使用し、likeListをJavaScriptに送信*/
+            let isLike = [[${isLike}]]; //「likeList」はサーバーから送られたエンティティリスト
+            let userId = [[${session.userId}]];
+
+            console.log(isLike); // サーバーから送られたデータをJavaScriptから確認可能
+            // console.log(userId); // サーバーから送られたデータをJavaScriptから確認可能
+
+            for(let i = 0; i< isLike.length; i++) {
+                if(isLike[i].userId == userId) {
+                    console.log("一致");
+                    document.getElementById("unlikeBtn").style.display = "";
+                    document.getElementById("likeBtn").style.display = "none";
+                    break;
+                }
+            }
+        }
+
+        init_like_set();
+    </script>
+
+    <!-- いいねボタンの処理 -->
+    <script th:inline="javascript">
+        function get_like(event, id) {
+            if([[${session.userId}]] == null) {
+                alert("ログインが必要です。");
+                return;
+            }
+            // いいねのリクエストのためのURL生成
+            const url = `/like/board/` + id + `/like`;
+
+            // fetchを利用しGETリクエスト送信
+            fetch(url, {
+                method: 'GET',
+            })
+            .then(response => response.json())  // サーバーからJSONレスポンスが発生する場合、処理
+            .then(data => {
+                // レスポンス後処理
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                // エラー処理
+                console.error('Error:', error);
+            });
+
+            document.getElementById("unlikeBtn").style.display = "";
+            document.getElementById("likeBtn").style.display = "none";
+        }
+
+        function get_unlike(event, id) {
+            // いいねリクエストのためのURL生成
+            const url = `/like/board/` + id + `/unlike`;
+
+            // fetchを利用し、GETリクエストを送信
+            fetch(url, {
+                method: 'GET',
+            })
+            .then(response => response.json())  // サーバーからJSONレスポンスが発生する場合、処理
+            .then(data => {
+                // レスポンス後処理
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                // 오류 처리
+                console.error('Error:', error);
+            });
+
+            document.getElementById("unlikeBtn").style.display = "none";
+            document.getElementById("likeBtn").style.display = "";
+        }
+    </script>
+
+    <!-- コメントログイン -->
+    <script th:inline="javascript"> 
+        function submit_reply() {
+            if([[${session.userId}]] == null) {
+                alert("コメントの作成にはログインが必要です。");
+                return;
+            }
+            
+            var form = document.getElementById('replyForm');  // フォームを探す
+            form.submit();  // フォームを送信
+        }
+    </script>
+
+</body>
+
+</html>

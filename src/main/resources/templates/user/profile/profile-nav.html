@@ -1,0 +1,36 @@
+<!-- サイドバー -->
+<div class="sidebar" th:fragment="nav">
+    <a href="/home">
+        <h2>🍰</h2>
+    </a>
+    <a href="/user/profile/edit-image" class="no-underline">
+        <div class="menu-item">
+            <i class="fas fa-user"></i>
+            <span class="side-text">プロフィール画像設定</span>
+        </div>
+    </a>
+    <a href="/user/profile/edit" class="no-underline">
+        <div class="menu-item">
+            <i class="fas fa-edit"></i>
+            <span class="side-text">会員情報確認/編集</span>
+        </div>
+    </a>
+    <a href="/user/profile/favorites-list" class="no-underline">
+        <div class="menu-item">
+            <i class="fas fa-heart"></i>
+            <span class="side-text">いいねリスト</span>
+        </div>
+    </a>
+    <a href="/user/profile/manage-content" class="no-underline">
+        <div class="menu-item">
+            <i class="fas fa-comments"></i>
+            <span class="side-text">投稿管理</span>
+        </div>
+    </a>
+    <a href="/user/withdraw" class="no-underline">
+        <div class="menu-item">
+            <i class="fas fa-user-slash"></i>
+            <span class="side-text">アカウント削除</span>
+        </div>
+    </a>
+</div>

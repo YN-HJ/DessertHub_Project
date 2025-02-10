@@ -1,0 +1,160 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fff8f0;
+
+}
+
+.container {
+    width: 1100px;
+    height: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #f06292;
+    border-bottom: 2px solid #f06292;
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #5d4037;
+    margin-bottom: 5px;
+}
+
+/* 入力欄の大きさ調整 */
+.form-group select {
+    width: 40%;
+    /* カテゴリー */
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #f8bbd0;
+    background-color: #fffafa;
+}
+
+.form-group input {
+    width: 70%;
+    /* タイトル */
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #f8bbd0;
+    background-color: #fffafa;
+}
+
+.form-group textarea {
+    width: 95%;
+    /* 内容 */
+    height: 200px;
+    /* 固定の大きさ */
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #f8bbd0;
+    background-color: #fffafa;
+    resize: none;
+    /* 大きさの調整を無効化 */
+}
+
+/* ボタンのスタイル */
+.drafts-button,
+.media-buttons button,
+.button-group button {
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: 25px;
+    border: none;
+    background-color: #f06292;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.drafts-button:hover,
+.media-buttons button:hover,
+.button-group button:hover {
+    background-color: #e91e63;
+    transform: scale(1.1);
+}
+
+/* 下書きの保存ポップアップ */
+.drafts-popup {
+    display: none;
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background-color: #fff;
+    border: 1px solid #f8bbd0;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    max-height: 300px;
+    overflow-y: auto;
+    width: 300px;
+}
+
+.draft-list li {
+    padding: 10px;
+    border-bottom: 1px solid #f8bbd0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.draft-list li:hover {
+    background-color: #ffe4e1;
+}
+
+.delete-btn {
+    color: red;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.divider {
+    border-top: 1px solid #f8bbd0;
+    margin: 20px 0;
+}
+
+.media-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Fade-in animation for better visuals */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

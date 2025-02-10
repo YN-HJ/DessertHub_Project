@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投稿</title>
+
+    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+    <link rel="stylesheet" href="/css/fragments/nav.css">
+    <link rel="stylesheet" href="/css/fragments/footer.css">
+    <link rel="stylesheet" href="/css/gallery/galleryView.css">
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header th:replace="fragments/header.html :: header"></header>
+
+
+    <main>
+        <!-- サイドバー -->
+        <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+        <div class="container">
+            <div class="header">
+                <div class="title" id="post-title"><h1 th:text="${gallery.galleryTitle}"></h1></div>
+
+                <div class="info" id="post-info">
+                    投稿者：<span th:text="${gallery.userNn}"></span> | 
+                    作成日時：<span th:text="${#temporals.format(gallery.galleryWriteday, 'yyyy-MM-dd HH:mm')}"></span> | いいね：<span th:text="${gallery.galleryLiked}"></span> | 
+                </div>
+
+                <div class="actions">
+                    <a href="/gallery"><button id="edit-post">リストへ</button></a>
+                </div>
+            </div>
+
+            <div th:if="${gallery.galleryImg}" style="display: flex; justify-content: center; align-items: center;">
+                <img th:src="${gallery.galleryImg}" alt="画像" style="max-width: 100%; max-height: 400px; height: auto; width: auto;"/>
+            </div>
+
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <!-- いいねボタンの位置調整 -->
+                <button type="button" class="like-btn" th:id="likeBtn" th:gurl="${gallery.id}"
+                th:onclick="get_like(event, this.getAttribute('gurl'))">♥</button>
+                <button type="button" class="unlike-btn" th:id="unlikeBtn" 
+                th:gurl="${gallery.id}" th:onclick="get_unlike(event, this.getAttribute('gurl'))" style="display: none;">♥</button>
+            </div>
+            
+        </div>
+
+    </main>
+
+    <!-- フッター -->
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js"></script>
+    
+    <!-- いいねボタンの初処理 -->
+    <script th:inline="javascript">
+        function init_like_set() {
+            /* [[${likeList}]]を使い、likeListをJavaScriptへ送信 */
+            let isLike = [[${isLike}]]; // 「likeList」はサーバーから転送されたエンティティリスト
+            let userId = [[${session.userId}]];
+
+            for(let i = 0; i< isLike.length; i++) {
+                if(isLike[i].userId == userId) {                    
+                    document.getElementById("unlikeBtn").style.display = "";
+                    document.getElementById("likeBtn").style.display = "none";
+                    break;
+                }
+            }
+        }
+
+        init_like_set();
+    </script>
+
+    <!-- いいねボタンの処理 -->
+    <script th:inline="javascript">
+        function get_like(event, id) {
+            if([[${session.userId}]] == null) {
+                alert("いいねするにはログインが必要です。");
+                return;
+            }
+            // いいねリクエストのためのURL生成
+            const url = `/like/gallery/` + id + `/like`;
+
+            // fetchを利用しGETリクエスト送信
+            fetch(url, {
+                method: 'GET',
+            })
+            .then(response => response.json())  // サーバーからJSONレスポンスがある場合処理
+            .then(data => {
+                // レスポンス後処理
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                // エラー処理
+                console.error('Error:', error);
+            });
+
+            document.getElementById("unlikeBtn").style.display = "";
+            document.getElementById("likeBtn").style.display = "none";
+        }
+
+        function get_unlike(event, id) {
+            // いいねリクエストのためのURL生成
+            const url = `/like/gallery/` + id + `/unlike`;
+
+            // fetchを利用しGETリクエスト送信
+            fetch(url, {
+                method: 'GET',
+            })
+            .then(response => response.json())  // サーバーからJSONレスポンスがある場合処理
+            .then(data => {
+                // レスポンス後処理
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                // エラー処理
+                console.error('Error:', error);
+            });
+
+            document.getElementById("unlikeBtn").style.display = "none";
+            document.getElementById("likeBtn").style.display = "";
+        }
+    </script>
+
+</body>
+
+</html>

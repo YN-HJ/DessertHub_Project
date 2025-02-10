@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プロフィール編集</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/user/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+  <link rel="stylesheet" href="/css/user/edit.css">
+</head>
+
+<body>
+
+
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <nav th:replace="user/profile/profile-nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+  <div class="mypage-container">
+
+    <div class="container">
+      <h2>プロフィール編集</h2>
+
+      <label for="userId">ID</label>
+      <input type="text" id="userId" class="fixed-id" th:value="${user.userId}" disabled>
+
+      <form id="profileUpdateForm" action="/user/update" th:object="${user}" method="post">
+        <label for="newPassword">パスワード変更</label>
+        <input type="password" id="newPassword" th:field="*{userPw}" placeholder="変更するパスワードを入力してください。">
+
+        <label for="confirmPassword">パスワード確認</label>
+        <input type="password" id="confirmPassword" placeholder="変更するパスワードを入力してください。">
+        <div class="password-match" id="passwordMatch"></div>
+
+        <label for="email">メールアドレス</label>
+        <div class="email-container">
+          <input type="text" id="email" class="email-input" placeholder="example"
+            th:value="${user.userEm.split('@')[0]}" required>
+          <span>@</span>
+          <select id="emailDomain">
+            <option value="gmail.com" th:selected="${user.userEm.endsWith('gmail.com')}">gmail.com</option>
+            <option value="naver.com" th:selected="${user.userEm.endsWith('naver.com')}">naver.com</option>
+            <option value="daum.net" th:selected="${user.userEm.endsWith('daum.net')}">daum.net</option>
+            <option value="custom" th:selected="${user.userEm.contains('custom')}">直接入力</option>
+          </select>
+        </div>
+
+        <input type="text" id="customDomain" placeholder="ドメインを入力してください" style="display: none; margin-top: 10px;"
+          th:value="${user.userEm.split('@')[1]}">
+
+        <input type="hidden" id="fullEmail" th:field="*{userEm}" value="">
+
+
+        <label for="nickname">ニックネーム</label>
+        <input type="text" id="nickname" th:field="*{userNn}" placeholder="ニックネームを入力してください">
+
+        <button type="submit" class="button">保存</button>
+      </form>
+
+      <div class="info">
+        <p>変更内容を保存する場合「保存」をクリックしてください。</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+
+
+
+  <script>
+    // パスワード確認
+    document.getElementById('confirmPassword').addEventListener('input', function () {
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const passwordMatch = document.getElementById('passwordMatch');
+
+      if (newPassword === confirmPassword) {
+        passwordMatch.textContent = 'パスワードが一致します。';
+        passwordMatch.className = 'password-match green';
+      } else {
+        passwordMatch.textContent = 'パスワードが一致しません。';
+        passwordMatch.className = 'password-match red';
+      }
+    });
+
+    // メールアドレスドメイン選択処理
+    document.getElementById('emailDomain').addEventListener('change', function () {
+      const customDomainInput = document.getElementById('customDomain');
+      if (this.value === 'custom') {
+        customDomainInput.style.display = 'block';
+        customDomainInput.placeholder = 'ドメインを入力して下さい。';
+      } else {
+        customDomainInput.style.display = 'none';
+        customDomainInput.value = '';
+      }
+    });
+
+
+    // メールアドレスを含め送信
+    document.getElementById('profileUpdateForm').addEventListener('submit', function (event) {
+      const emailInput = document.getElementById('email').value;
+      const emailDomain = document.getElementById('emailDomain').value;
+      const customDomain = document.getElementById('customDomain').value;
+
+      let fullEmail = emailInput;
+
+      // 直接入力を選択した場合
+      if (emailDomain === 'custom') {
+        fullEmail += '@' + customDomain;
+      } else {
+        fullEmail += '@' + emailDomain;
+      }
+
+      // 合わせたメールアドレスをhidden inputへ設定
+      document.getElementById('fullEmail').value = fullEmail;
+
+
+      const confirmSave = confirm("保存しますか？");
+      if (confirmSave) {
+        document.getElementById("profileUpdateForm").submit();
+      } else {
+        alert("キャンセルされました。");
+        event.preventDefault();  // POSTリクエストを防止
+        return;
+      }
+    });
+  </script>
+
+</body>
+
+</html>

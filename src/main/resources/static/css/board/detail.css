@@ -1,0 +1,185 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-sizing: border-box;
+    background-color: #fff8f0;
+    /* 背景（桃色）*/
+}
+
+.container {
+    padding: 20px;
+    width: 1000px;
+    margin: 40px auto;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* アニメーション効果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ffb6c1;
+    position: relative;
+}
+
+.category {
+    font-size: 14px;
+    color: #ff6f91;
+    margin-bottom: 5px;
+}
+
+.title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #ff6b81;
+}
+
+.info {
+    font-size: 14px;
+    color: #777;
+    margin-top: 5px;
+}
+
+.content {
+    margin: 20px 0;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #5d4037;
+}
+
+.button {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background: none;
+    cursor: pointer;
+    transition: background 0.5s ease;
+}
+
+/* ボタンのスタイル */
+.actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.actions button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #ff6b81;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.actions button:hover {
+    background-color: #e91e63;
+}
+
+/* コメントのスタイル */
+.comments-container {
+    margin-top: 20px;
+}
+
+.comment-input-div {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.comment-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.comment-button {
+    padding: 10px 15px;
+    border: none;
+    background-color: #ff6b81;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.comment-button:hover {
+    background-color: #e91e63;
+}
+
+.comment-list {
+    list-style: none;
+    padding: 0;
+}
+
+.comment-list li {
+    padding: 12px;
+    border-bottom: 1px solid #ffe4e1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+
+.like-btn {
+    background-color: #838383;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.like-btn:hover {
+    background-color: #ff4b4b;
+}
+
+.unlike-btn {
+    background-color: #ff2323;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.unlike-btn:hover {
+    background-color: #ff9292;
+}

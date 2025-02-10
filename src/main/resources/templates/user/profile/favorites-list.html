@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>いいねリスト</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/user/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+  <link rel="stylesheet" href="/css/user/favorites.css">
+
+</head>
+
+<body>
+
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <nav th:replace="user/profile/profile-nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+  <div class="mypage-container">
+    
+    <div class="container">
+      <div class="nav">
+        <div class="nav-buttons">
+          <button data-category="posts">投稿</button>
+          <button data-category="gallery">ギャラリー</button>
+        </div>
+      </div>
+
+      <!-- 掲示板 -->
+      <div id="postsContainer" class="list-container active">
+        <div class="item" th:each="likeBoard : ${likeListBoard}">
+          <div class="item-details">
+            <a th:href="@{/board/{id}(id=${likeBoard.targetId})}" class="no-underline">
+              <h3 th:text="${likeBoard.targetTitle}"></h3>
+            </a>
+            <p
+              th:text="${#strings.length(likeBoard.targetContent) > 10 ? #strings.substring(likeBoard.targetContent, 0, 10) + '...' : likeBoard.targetContent}">
+              投稿内容です。</p>
+          </div>
+
+          <button type="button" class="heart-btn" th:id="'likeBtn' + ${likeBoard.id}" th:lid="${likeBoard.id}"
+            th:gurl="${likeBoard.targetId}"
+            th:onclick="get_unlike_board(event, this.getAttribute('lid'), this.getAttribute('gurl'))"></button>
+          <button type="button" class="heart-btn-gray" th:id="'unlikeBtn' + ${likeBoard.id}" th:lid="${likeBoard.id}"
+            th:gurl="${likeBoard.targetId}"
+            th:onclick="get_like_board(event, this.getAttribute('lid'), this.getAttribute('gurl'))"
+            style="display: none;"></button>
+
+        </div>
+      </div>
+
+      <!-- ギャラリー -->
+      <div id="galleryContainer" class="list-container">
+        <div class="item" th:each="likeGallery : ${likeListGallery}">
+          <div class="item-details">
+            <a th:href="@{/gallery/gview/{id}(id=${likeGallery.targetId})}" class="no-underline">
+              <h3 th:text="${likeGallery.targetTitle}"></h3>
+            </a>
+
+            <button type="button" class="heart-btn" th:id="'likeBtn' + ${likeGallery.id}" th:lid="${likeGallery.id}"
+              th:gurl="${likeGallery.targetId}"
+              th:onclick="get_unlike_gallery(event, this.getAttribute('lid'), this.getAttribute('gurl'))"></button>
+            <button type="button" class="heart-btn-gray" th:id="'unlikeBtn' + ${likeGallery.id}"
+              th:lid="${likeGallery.id}" th:gurl="${likeGallery.targetId}"
+              th:onclick="get_like_gallery(event, this.getAttribute('lid'), this.getAttribute('gurl'))"
+              style="display: none;"></button>
+
+            <a th:href="@{/gallery/gview/{id}(id=${likeGallery.targetId})}" class="no-underline">
+              <img th:src="${likeGallery.targetContent}" alt="ギャラリー画像" style="width: 20%; border-radius: 8px;">
+            </a>
+
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+
+  <!-- アニメーション追加 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js"></script>
+
+
+  <script th:inline="javascript">
+    function get_like_board(event, id, tid) {
+      const url = `/like/board/` + tid + `/like`;
+
+      // fetchを利用しGETリクエスト送信
+      fetch(url, {
+        method: 'GET',
+      })
+        .then(response => response.json())  // サーバーからJSONレスポンスが来た場合処理
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+      document.getElementById("unlikeBtn" + id).style.display = "none";
+      document.getElementById("likeBtn" + id).style.display = "";
+    }
+
+    function get_unlike_board(event, id, tid) {
+      // いいねリクエストのためのURL生成
+      const url = `/like/board/` + tid + `/unlike`;
+
+      // fetchを利用しGETリクエスト送信
+      fetch(url, {
+        method: 'GET',
+      })
+        .then(response => response.json())  // サーバーからJSONレスポンスが来た場合処理
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+      document.getElementById("unlikeBtn" + id).style.display = "";
+      document.getElementById("likeBtn" + id).style.display = "none";
+    }
+  </script>
+
+
+  <script>
+    $(document).ready(function () {
+      // カテゴリー転換
+      const navButtons = document.querySelectorAll('.nav-buttons button');
+      const containers = document.querySelectorAll('.list-container');
+
+      navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          containers.forEach(container => container.classList.remove('active'));
+          document.getElementById(button.dataset.category + 'Container').classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

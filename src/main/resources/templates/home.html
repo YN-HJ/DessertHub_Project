@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dessert Hub Community</title>
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/fragments/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer.css">
+  <link rel="stylesheet" href="/css/home.css">
+</head>
+
+<body>
+
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+  <main>
+    <div class="content">
+      <div class="slider" id="slider">
+        <img src="img/pastel-cinnamoroll-desserts-sweets.png" class="active" alt="Dessert 1">
+        <img src="img/pokemon-cafe-tokyo-pikachu-sweets-menu.png" alt="Dessert 2">
+        <img src="img/Icy-Desserts.jpg" alt="Dessert 3">
+      </div>
+
+      <section class="featured">
+        <h2>おすすめのスイーツ</h2>
+        <div class="card-grid">
+          <a href="/board/4" class="no-underline">
+            <div class="card">
+              <img src="img/valentinesdayminiberrytrifles4.png" alt="Dessert">
+              <p>甘くて美味しいイチゴケーキ(⁎⁍̴̛͂▿⁍̴̛͂⁎)*✲ﾟ*｡⋆♡ོ </p>
+            </div>
+          </a>
+          <a href="/board/5" class="no-underline">
+            <div class="card">
+              <img src="img/espresso-works-blog-christmas-desserts-ideas-and-recipes_1081x.jpg" alt="Dessert">
+              <p>クリスマスに家族と一緒に楽しむクッキーദ്ദി(☆⸝⸝ʚ̴̶̷̆ ᴗ ʚ̴̶̷̆⸝⸝) </p>
+            </div>
+          </a>
+          <a href="/board/6" class="no-underline">
+            <div class="card">
+              <img src="img/flourless-chocolate-cake-SQUARE.jpg" alt="Dessert">
+              <p>
+                あまーいチョコレートケーキ<br>
+                (っ˘ڡ˘ς)🍴 🍰 🍴(*^∀^* )
+              </p>
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+
+
+  <script>
+    const images = document.querySelectorAll('.slider img');
+    let currentIndex = 0;
+
+    setInterval(() => {
+      images[currentIndex].classList.remove('active');
+      currentIndex = (currentIndex + 1) % images.length;
+      images[currentIndex].classList.add('active');
+    }, 3000);
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,166 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff5f8;
+    color: #333;
+}
+
+.container {
+    width: 1500px;
+    margin: 10px;
+    padding: 20px;
+    background-color: #ffe4e9;
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(255, 105, 180, 0.3);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-buttons button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: #ff85a2;
+    color: white;
+    cursor: pointer;
+}
+
+.list-container {
+    display: none;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.list-container.active {
+    display: flex;
+}
+
+.item {
+    flex: 1 1 calc(50% - 10px);
+    background-color: #fff0f3;
+    border: 1px solid #ffc2d1;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(255, 182, 193, 0.5);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* いいねボタンのスタイル */
+.heart-btn {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.heart-btn:before,
+.heart-btn:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 16px;
+    background: red;
+    border-radius: 50px 50px 0 0;
+}
+
+.heart-btn:before {
+    left: 10px;
+    transform: rotate(-45deg);
+    transform-origin: 0 100%;
+}
+
+.heart-btn:after {
+    left: 0;
+    transform: rotate(45deg);
+    transform-origin: 100% 100%;
+}
+
+.heart-btn.active:before,
+.heart-btn.active:after {
+    background: dimgrey !important;
+
+}
+/* オフ状態のボタンのスタイル */
+.heart-btn-gray {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.heart-btn-gray:before,
+.heart-btn-gray:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 16px;
+    background: dimgrey;
+    border-radius: 50px 50px 0 0;
+}
+
+.heart-btn-gray:before {
+    left: 10px;
+    transform: rotate(-45deg);
+    transform-origin: 0 100%;
+}
+
+.heart-btn-gray:after {
+    left: 0;
+    transform: rotate(45deg);
+    transform-origin: 100% 100%;
+}
+
+.heart-btn-gray.active:before,
+.heart-btn-gray.active:after {
+    background: red !important;
+
+}
+
+/* 検索領域のスタイル復元 */
+.nav-search {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-search input {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ffabc2;
+    border-radius: 5px;
+}
+
+.nav-search button {
+    padding: 10px 15px;
+    background-color: #ffa5b8;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-search button:hover {
+    background-color: #ff85a2;
+    transform: scale(1.05);
+}

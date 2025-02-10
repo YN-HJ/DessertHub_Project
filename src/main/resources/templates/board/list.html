@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掲示板</title>
+
+    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+    <link rel="stylesheet" href="/css/fragments/nav.css">
+    <link rel="stylesheet" href="/css/fragments/footer.css">
+    <link rel="stylesheet" href="/css/board/list.css">
+</head>
+
+<body>
+
+    <!-- ヘッダー -->
+    <header th:replace="fragments/header.html :: header"></header>
+
+
+
+    <main>
+        <!-- サイドバー -->
+        <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+        <div class="container">
+            <div class="header">
+                <form action="/board/order" method="get">
+                    <div class="filter-box">
+                        <select id="categoryFilter" name="cate" onchange="this.form.submit()">
+                            <option value="all" th:if="${selected1 == 'all'}" selected>全て</option>
+                            <option value="all" th:unless="${selected1 == 'all'}">全て</option>
+                            <option value="notice" th:if="${selected1 == 'notice'}" selected>お知らせ</option>
+                            <option value="notice" th:unless="${selected1 == 'notice'}">お知らせ</option>
+                            <option value="free" th:if="${selected1 == 'free'}" selected>自由掲示板</option>
+                            <option value="free" th:unless="${selected1 == 'free'}">自由掲示板</option>
+                            <option value="qna" th:if="${selected1 == 'qna'}" selected>Q&A</option>
+                            <option value="qna" th:unless="${selected1 == 'qna'}">Q&A</option>
+                        </select>
+                        <select id="sortOrder" name="ord" onchange="this.form.submit()">
+                            <option value="latest" th:if="${selected2 == 'latest'}" selected>最新順</option>
+                            <option value="latest" th:unless="${selected2 == 'latest'}">最新順</option>
+                            <option value="popular" th:if="${selected2 == 'popular'}" selected>人気順</option>
+                            <option value="popular" th:unless="${selected2 == 'popular'}">人気順</option>
+                            <option value="oldest" th:if="${selected2 == 'oldest'}" selected>古い順</option>
+                            <option value="oldest" th:unless="${selected2 == 'oldest'}">古い順</option>
+                        </select>
+                    </div>
+                </form>
+
+                <form action="/board/search" method="get">
+                    <div class="search-container">
+                        <div class="form-group">
+                            <select name="search">
+                                <option value="title" selected>タイトル</option>
+                                <option value="content">内容</option>
+                                <option value="nick">投稿者</option>
+                            </select>
+                        </div>
+    
+                        <input type="text" id="searchInput" class="search-box" name="stext" placeholder="投稿を検索" />
+                        <button id="searchBtn" class="search-btn">検索</button>
+                    </div>
+                </form>
+            </div>
+
+            <table class="post-list">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">種類</th>
+                        <th style="width: 10%;">番号</th>
+                        <th style="width: 44%;">タイトル</th>
+                        <th style="width: 10%;">投稿者</th>
+                        <th style="width: 12%;">作成日時</th>
+                        <th style="width: 10%;">閲覧数</th>
+                        <th style="width: 6%;">いいね</th>
+                    </tr>
+                </thead>
+                <!-- 投稿リストの領域 -->
+                <tbody id="postList" th:if="${board != null}">
+                    <tr th:each="board : ${board}">
+                        <td>
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:if="${board.boardCategory == 'notice'}" class="no-underline">お知らせ</a> <!-- カテゴリー -->
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:if="${board.boardCategory == 'free'}" class="no-underline">自由</a> <!-- カテゴリー -->
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:if="${board.boardCategory == 'qna'}" class="no-underline">Q&A</a> <!-- カテゴリー -->
+                        </td>
+                        <td>
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.id}" class="no-underline"></a> <!-- 番号 -->
+                        </td>
+                        <td>
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.boardTitle}" class="no-underline"></a> <!-- タイトル -->
+                        </td>
+                        <td>
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.userNn}" class="no-underline"></a> <!-- 投稿者 -->
+                        </td>
+                        <td>
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:text="${#temporals.format(board.boardWriteday, 'yyyy-MM-dd')}" class="no-underline"></a> <!-- 作成日時 -->
+                        </td>
+                        <td>
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.boardView}" class="no-underline"></a> <!-- 閲覧数 -->
+                        </td>
+                        <td>
+                            <a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.boardLiked}" class="no-underline"></a> <!-- いいね -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <!-- 投稿の下のページ番号領域 -->
+            <div class="pagination" id="pagination"></div>
+
+            <a href="/board/new">
+                <button class="write-btn">投稿する</button>
+            </a>
+        </div>
+
+    </main>
+
+
+
+    <!-- フッター -->
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+
+    <!-- JavaScript -->
+    <script>
+        
+        // サイドバーの位置固定
+        const sidebar = document.querySelector('.sidebar');
+        const initialTop = 0; // デフォルトの位置設定
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+
+            // スクロール方向に合わせて移動
+            if (currentScrollY > lastScrollY) {
+                // 下にスクロール
+                sidebar.style.transform = `translateY(${currentScrollY}px)`;
+            } else {
+                // 上にスクロール
+                sidebar.style.transform = `translateY(${currentScrollY}px)`;
+            }
+
+            lastScrollY = currentScrollY; // 現在のスクロール位置を保存
+        });
+    </script>
+</body>
+
+</html>

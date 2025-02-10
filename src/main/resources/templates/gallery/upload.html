@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画像アップロードページ</title>
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/fragments/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+  <link rel="stylesheet" href="/css/gallery/upload.css">
+
+</head>
+
+<body>
+
+  <!-- ヘッダー -->
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <div class="main-layout">
+    <!-- サイドバー -->
+    <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+    <div class="upload-container">
+      <h2>画像アップロード</h2>
+      <form id="uploadForm" th:action="@{/gallery/upload}" th:object="${gallery}" method="post"
+        enctype="multipart/form-data">
+        <input type="text" id="title" th:field="*{galleryTitle}" placeholder="タイトル入力" required />
+
+        <input type="text" id="hashtags" placeholder="#ハッシュタグ入力後、Enterキー" />
+        <div class="hashtags-container" id="hashtagsContainer"></div>
+        <input type="hidden" id="encodedHashtags" name="encodedHashtags" th:field="*{galleryHashtag}">
+        <!-- ハッシュタグを含む隠しフィールド -->
+
+
+        <input type="file" id="imageUpload" accept="image/*" onchange="encodeImage(event)" required />
+        <div class="preview-container" id="previewContainer" onclick="showModal()"></div>
+        <input type="hidden" id="encodedImage" name="encodedImage" th:field="*{galleryImg}">
+
+
+        <!--  プレビューモーダル -->
+        <div id="modal" class="preview-modal" style="display: none;" onclick="close_modal()">
+          <button type="button" id="closeModal" class="close-btn" onclick="close_modal()">閉じる</button>       
+          <img id="modalImage" src="" alt="画像プレビュー">      
+        </div>        
+
+        <div class="button-container">
+          <button type="button" id="cancelBtn" class="upload-button">キャンセル</button>
+          <button type="submit" id="submitBtn" class="upload-button">登録</button>
+        </div>
+      </form>
+    </div>
+
+
+  </div>
+
+  <!-- フッター -->
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+
+  <!-- ハッシュタグの処理スクリプト -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const hashtagsInput = document.getElementById('hashtags');
+      const hashtagsContainer = document.getElementById('hashtagsContainer');
+      const encodedHashtagsField = document.getElementById('encodedHashtags');
+      let hashtags = [];
+
+      // ハッシュタグの入力処理
+      hashtagsInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && hashtagsInput.value.trim() !== '') {
+          const hashtag = "#" + hashtagsInput.value.trim();
+
+          // ハッシュタグが#で始まるのかを確認          
+          if (!hashtags.includes(hashtag)) {
+            hashtags.push(hashtag);  // ハッシュタグを配列に追加
+            displayHashtags(); // ハッシュタグリストのアップデート
+            hashtagsInput.value = '';  // 入力フィールドの初期化
+          }
+          event.preventDefault(); // 基本Enterキーの動作を防止
+        }
+      });
+
+      // ハッシュタグのリストを画面に表示
+      function displayHashtags() {
+        hashtagsContainer.innerHTML = ''; // 既存のハッシュタグリストをクリア
+        hashtags.forEach(function (hashtag, index) {
+          const hashtagElement = document.createElement('span');
+          hashtagElement.textContent = hashtag;
+          hashtagElement.classList.add('hashtag');  // hashtagクラスを追加
+          hashtagElement.addEventListener('click', function () {
+            removeHashtag(index);  // ハッシュタグの削除
+          });
+
+          hashtagsContainer.appendChild(hashtagElement);
+        });
+
+        // ハッシュタグを#で区別された文字列に変換しhidden inputに設定
+        encodedHashtagsField.value = hashtags.join(''); 
+      }
+
+
+      // ハッシュタグの削除処理
+      function removeHashtag(index) {
+        hashtags.splice(index, 1);  // ハッシュタグの削除
+        displayHashtags();           // 画面に反映
+      }
+
+      // キャンセルボタンクリック時にハッシュタグのリスト初期化
+      document.getElementById('cancelBtn').addEventListener('click', function () {
+        hashtags = [];
+        displayHashtags();
+      });
+
+    });
+
+  </script>
+
+  <!-- モーダル -->
+  <script>
+    // モーダルを開く
+    function showModal() {
+      const imageSrc = document.getElementById('previewContainer').querySelector('img') ? document.getElementById('previewContainer').querySelector('img').src : '';
+      const modal = document.getElementById('modal');
+      const modalImage = document.getElementById('modalImage');
+      modalImage.src = imageSrc;  // 모달 이미지 소스 설정
+      modal.style.display = 'flex';  // 모달 보이기
+    }
+
+    // モーダルを閉じる
+    function close_modal() {
+      document.getElementById('modal').style.display = 'none';  // モーダルを隠す
+    }
+  </script>
+
+  <!-- キャンセルボタン -->
+  <script>
+    // キャンセルボタンクリック時にアラート
+    cancelBtn.addEventListener('click', () => {
+      alert('キャンセルしました。');
+    });
+  </script>
+
+  <!-- 画像エンコード -->
+  <script>
+    // 画像選択時にBase64にエンコードし、隠しフィールドに設定
+    function encodeImage(event) {
+      var file = event.target.files[0];  // ファイル入力から選択された一番目のファイルをロード
+
+      if (file) {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+          // Base64エンコードデータ
+          var base64data = reader.result;
+
+          // 隠しフィールドにBase64データ設定
+          document.getElementById('encodedImage').value = base64data;
+
+          // プレビュー表示
+          var previewContainer = document.getElementById('previewContainer');
+          previewContainer.innerHTML = '';  // 既存のプレビュー削除
+          var imgElement = document.createElement('img');
+          imgElement.src = base64data;
+          imgElement.alt = 'Image Preview';
+          imgElement.style.maxWidth = '300px';  // プレビューサイズ調整
+          previewContainer.appendChild(imgElement);
+        };
+
+        reader.readAsDataURL(file);  // ファイルをBase64でロード
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン/会員登録</title>
+  <link rel="stylesheet" href="/css/user/login.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- ログイン -->
+    <div class="form-container" id="login-form">
+      <h1>ログイン</h1>
+      <form action="/user/login-check" th:object="${user}" method="post">
+        <input type="text" id="login-username" name="user_name" th:field="*{userId}" placeholder="ID" required>
+        <input type="password" id="login-password" name="user_password" th:field="*{userPw}" placeholder="パスワード"
+          required>
+        <button type="submit">ログイン</button>
+      </form>
+
+      <p>アカウントをお持ちでない方 <a href="#" onclick="toggleForm()">会員登録</a></p>
+      <div class="link-container">
+        <a href="/user/find">ID/パスワードをお忘れの方</a>
+      </div>
+    </div>
+
+    <!-- 会員登録 -->
+    <div class="form-container" id="signup-form" style="display:none;">
+      <h1>会員登録</h1>
+      <form id="registerForm" action="/user/register" th:object="${user}" method="post">
+        <div class="inline-container">
+          <input type="text" id="username" name="username" th:field="*{userId}" placeholder="ID">
+          <button type="button" id="checkUsernameBtn" class="check-btn">確認</button>
+        </div>
+        <!-- 使用可能かを表示する領域 -->
+        <small id="usernameResult"></small>
+
+        <input type="password" id="signup-password" name="reg_pass" th:field="*{userPw}" placeholder="パスワード">
+        <input type="password" id="confirm-password" placeholder="パスワード確認" oninput="validatePassword()">
+        <small id="password-feedback"></small>
+        <input type="text" id="nickname" name="reg_nickname" th:field="*{userNn}" placeholder="ニックネーム">
+
+
+        <!-- メールアドレス入力 -->
+        <div class="email-container">
+          <input type="text" id="email" name="reg_email" placeholder="メールアドレス">
+          <span>@</span>
+          <select id="emailDomain">
+            <option value="gmail.com">gmail.com</option>
+            <option value="naver.com">naver.com</option>
+            <option value="daum.net">daum.net</option>
+            <option value="custom">直接入力</option>
+          </select>
+          <!-- ユーザー指定ドメイン入力欄（デフォルトで隠す） -->
+          <input type="text" id="customDomain" placeholder="直接入力" style="display:none;">
+        </div>
+
+        <!-- メールアドレスフィールド -->
+        <input type="hidden" id="fullEmail" th:field="*{userEm}" value="">
+
+        <button type="button" onclick="toggleForm()">ログイン</button>
+        <button type="button" onclick="registerSubmit()">会員登録</button>
+      </form>
+    </div>
+
+    <div class="overlay-container">
+      <p>
+      <h1>Welcome to the dessert hub</h1>
+      </p>
+      <a href="/home" class="no-underline">
+        <button type="button">HELLO</button>
+      </a>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function toggleForm() {
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+      signupForm.style.display = signupForm.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function login() {
+      alert('ログインしました！');
+    }
+
+    function signup() {
+      const inputs = document.querySelectorAll('#signup-form input');
+      for (const input of inputs) {
+        if (!input.value) {
+          alert(`${input.placeholder}を入力してください。`);
+          return;
+        }
+      }
+    }
+
+    function validatePassword() {
+      const password = document.getElementById('signup-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const feedback = document.getElementById('password-feedback');
+      if (password === confirmPassword) {
+        feedback.textContent = 'パスワードが一致します。';
+        feedback.className = 'valid';
+      } else {
+        feedback.textContent = 'パスワードが一致しません。';
+        feedback.className = 'invalid';
+      }
+    }
+
+    document.getElementById('emailDomain').addEventListener('change', function () {
+      const customEmail = document.getElementById('customEmailDomain');
+      customEmail.style.display = this.value === 'custom' ? 'block' : 'none';
+    });
+
+    function registerSubmit() {
+      const emailInput = document.getElementById('email').value;
+      const emailDomain = document.getElementById('emailDomain').value;
+      const customDomain = document.getElementById('customDomain').value;
+
+      let fullEmail = emailInput;
+
+      // 「直接入力」を選択した場合
+      if (emailDomain === 'custom') {
+        if (!customDomain) {
+          alert('入力必須です。');
+          return;
+        }
+        fullEmail += '@' + customDomain;
+      } else {
+        fullEmail += '@' + emailDomain;
+      }
+
+      // 合わせたメールアドレスをhidden inputへ設定
+      document.getElementById('fullEmail').value = fullEmail;
+
+
+      const confirmSave = confirm("会員登録しますか？");
+      if (confirmSave) {
+        document.getElementById("registerForm").submit();
+      } else {
+        alert("キャンセルしました。");
+        return;
+      }
+    }
+
+  </script>
+
+  <!-- IDチェック -->
+  <script>
+    $(document).ready(function () {
+      $('#checkUsernameBtn').click(function () {
+        var username = $('#username').val();
+
+        if (username.trim() === "") {
+          alert("IDを入力してください。");
+          return;
+        }
+
+        // Ajaxリクエスト送信
+        $.ajax({
+          url: '/user/check-username',  // リクエストするURL
+          method: 'GET',
+          data: { username: username },
+          success: function (response) {
+            // ID使用可能状態によって結果表示
+            if (response.exists) {
+              $('#usernameResult').text('すでに使用中のIDです。').css('color', 'red');
+            } else {
+              $('#usernameResult').text('使用可能なIDです。').css('color', 'green');
+            }
+          },
+          error: function () {
+            alert("サーバーエラーが発生しました。");
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

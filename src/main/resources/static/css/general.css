@@ -1,0 +1,49 @@
+:root {
+    --bg-color: #fffafa;
+    --text-color: #333;
+    --header-bg-color: #ffdde1;
+    --cta-color: #ff6f91;
+    --cta-hover-color: #ff3d66;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* [data-theme="dark"] {
+    --bg-color: #2e2e2e;
+    --text-color: #fefefe;
+    --header-bg-color: #444;
+    --cta-color: #ff6f91;
+    --cta-hover-color: #ff3d66;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+} */
+
+body {
+    cursor: url('/img/foo192.cur'), auto;
+}
+
+main {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.no-underline {
+    text-decoration: none;
+    /* 下線の除去 */
+    color: inherit;
+    /* 親要素のフォント色を使用 */
+}
+
+/* マイページコンテナ */
+.mypage-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    
+    justify-content: center;
+    align-items: center;
+}
+
+.content-container {
+    flex: 1;
+}

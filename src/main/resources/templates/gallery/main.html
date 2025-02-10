@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ギャラリー</title>
+
+    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+    <link rel="stylesheet" href="/css/fragments/nav.css">
+    <link rel="stylesheet" href="/css/fragments/footer2.css">
+    <link rel="stylesheet" href="/css/gallery/main.css">
+
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header th:replace="fragments/header.html :: header"></header>
+
+    <div class="main-layout">
+        <!-- サイドバー -->
+        <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+        <div class="photo-grid">
+            <!-- galleryListをループ文で処理 -->
+            <div th:each="item : ${galleryList}" class="photo-item">
+                <img th:src="@{${item.galleryImg}}" th:alt="${item.galleryTitle}" th:hash="${item.galleryHashtag}"
+                th:onclick="open_modal(this.getAttribute('src'), this.getAttribute('alt'), this.getAttribute('hash'))"/>
+                <h3 class="modal-title" th:text="${item.galleryTitle}"></h3>
+
+                <p class="modal-hashtag" th:text="${item.galleryHashtag}"></p>
+                
+                <button type="button" class="close-btn" th:onclick="|location.href='@{/gallery/gview/{id}(id=${item.id})}'|">詳細</button>
+                <!-- いいねボタンの位置調整 -->
+                <button type="button" class="like-btn" th:id="'likeBtn' + ${item.id}" th:gurl="${item.id}"
+                th:onclick="get_like(event, this.getAttribute('gurl'))">♥</button>
+                <button type="button" class="unlike-btn" th:id="'unlikeBtn' + ${item.id}" 
+                th:gurl="${item.id}" th:onclick="get_unlike(event, this.getAttribute('gurl'))" style="display: none;">♥</button>
+                
+                <!-- モーダル -->
+                <div id="modal" class="modal" style="display:none;" >
+                    <div class="modal-content" onclick="event.stopPropagation()">
+                        <img id="modal-image" src="" alt="Modal Image" style="max-width: 100%; max-height: 400px; height: auto; width: auto;"/>
+                        <p id="modal-title"></p>
+                        <div id="modal-hashtag" class="modal-hashtags-container"></div>
+                        <br>
+                        <div class="actions">
+                            <button type="button" class="close-btn" onclick="closeModal()">閉じる</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <a href="/gallery/upload" class="register-btn">投稿</a>
+    </div>
+
+    <!-- フッター -->
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+
+
+    <script th:inline="javascript">
+        function init_like_set() {
+            /* [[${likeList}]]を使い、likeListをJavaScriptへ送信 */
+            var likeList = [[${likeListGallery}]]; // 「likeList」はサーバーから転送されたエンティティリスト
+            var userId = [[${session.userId}]];
+
+            console.log(likeList); 
+            console.log(userId); 
+
+            for(let i = 0 ; i < likeList.length; i++) {
+                console.log(likeList[i]);
+                if(likeList[i].userId == userId) {
+                    document.getElementById("unlikeBtn" + likeList[i].targetId).style.display = "";
+                    document.getElementById("likeBtn" + likeList[i].targetId).style.display = "none";
+                }
+            }
+        }
+
+        init_like_set();
+    </script>
+
+    <script th:inline="javascript">
+        function get_like(event, id) {
+            // いいねリクエストのためのURL生成
+            const url = `/like/gallery/` + id + `/like`;
+
+            // fetchを利用しGETリクエスト送信
+            fetch(url, {
+                method: 'GET',
+            })
+            .then(response => response.json())  // サーバーからJSONレスポンスがある場合処理
+            .then(data => {
+                // レスポンス後処理
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                // エラー処理
+                console.error('Error:', error);
+            });
+
+            document.getElementById("unlikeBtn" + id).style.display = "";
+            document.getElementById("likeBtn" + id).style.display = "none";
+        }
+
+        function get_unlike(event, id) {
+            // いいねリクエストのためのURL生成            
+            const url = `/like/gallery/` + id + `/unlike`;
+
+            // fetchを利用しGETリクエスト送信
+            fetch(url, {
+                method: 'GET',
+            })
+            .then(response => response.json())  // サーバーからJSONレスポンスがある場合処理
+            .then(data => {
+                // レスポンス後処理
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                // エラー処理
+                console.error('Error:', error);
+            });
+
+            document.getElementById("unlikeBtn" + id).style.display = "none";
+            document.getElementById("likeBtn" + id).style.display = "";
+        }
+    </script>
+
+<!-- モーダル -->
+    <script th:inline="javascript">
+        // モーダルを開く
+        function open_modal(imageUrl, title, hashtag) {
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modal-image');
+            const modalTitle = document.getElementById('modal-title');
+            const modalHashtag = document.getElementById('modal-hashtag');
+
+            // 受信したデータでモーダルをアップデート
+            modalImage.src = imageUrl;
+            modalTitle.textContent = title;
+            modalHashtag.textContent = hashtag;
+
+            // ハッシュタグの文字列を「#」を基準にsplit
+            const hashtags = hashtag.split('#').filter(tag => tag !== ""); // 空白が含まれた項目除去
+
+            // ハッシュタグを<span>タグで囲んで表示
+            modalHashtag.innerHTML = ''; // 以前に表示されたハッシュタグを初期化
+            hashtags.forEach(tag => {
+                const span = document.createElement('span');
+                span.className = 'hashtag';  // スタイルのためのクラス追加
+                span.innerText = "#" + tag;
+                modalHashtag.appendChild(span);
+            });
+
+            // モーダルの可視化
+            modal.style.display = 'block';
+        }
+
+        function open_modal_legacy(galleryImg, galleryTitle, galleryHashtag) {
+            document.getElementById("modal").style.display = "block";
+            document.getElementById("modal-image").src = galleryImg;
+            document.getElementById("modal-title").src = galleryTitle;
+            document.getElementById("modal-hashtag").innerText = galleryHashtag;
+        }
+
+        // モーダルを閉じる
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+
+    </script>
+</body>
+
+</html>

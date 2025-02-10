@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プロフィール画像変更</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/user/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+  <link rel="stylesheet" href="/css/user/editimage.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <nav th:replace="user/profile/profile-nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+  <div class="mypage-container">
+
+    <div class="container">
+      <h2>プロフィール画像変更</h2>
+
+      <form id="uploadForm" th:action="@{/user/update/image}" th:object="${user}" method="post"
+        enctype="multipart/form-data">
+        <!-- 現在のプロフィール画像 -->
+        <div class="profile-pic" id="profilePic">
+          <img th:src="${user.userPi}" alt="画像を選択" style="max-width: 100%; max-height: 100%;" />
+        </div>
+
+
+        <input type="file" id="imageUpload" accept="image/*" onchange="encodeImage(event)" required />
+        <div class="preview-container" id="previewContainer"></div>
+
+        <input type="hidden" id="encodedImage" name="encodedImage" th:field="*{userPi}">
+
+        <div class="button-container">
+          <button type="button" id="cancelBtn">キャンセル</button>
+          <button type="submit" id="submitBtn">登録</button>
+        </div>
+
+      </form>
+      <!-- 画像形式とサイズ制限 -->
+      <div class="info">
+        <p>100px以下のJPG、PNGファイルのみアップロード可能です。</p>
+      </div>
+    </div>
+
+    <!-- フッター -->
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+  </div>
+
+
+
+  <script>
+    // 画像プレビュー
+    function previewImage() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      // 有効なファイルかを確認
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const profilePic = document.getElementById('profilePic');
+          profilePic.style.backgroundImage = `url(${event.target.result})`;
+          profilePic.style.backgroundSize = 'cover';
+          profilePic.style.backgroundPosition = 'center';
+          profilePic.innerHTML = ''; // テキスト除去
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+
+    // 画像選択時にBase64でエンコードし、隠しフィールドに設定
+    function encodeImage(event) {
+      var file = event.target.files[0];  // ファイル入力で選択された一番目のファイルをロード
+
+      if (file) {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+          // Base64でエンコードされたデータ
+          var base64data = reader.result;
+
+          // 隠し入力フィールドにBase64のデータ設定
+          document.getElementById('encodedImage').value = base64data;
+
+          // プレビューの画像表示
+          var previewContainer = document.getElementById('previewContainer');
+          previewContainer.innerHTML = '';  // 既存のプレビュー削除
+          var imgElement = document.createElement('img');
+          imgElement.src = base64data;
+          imgElement.alt = 'Image Preview';
+          imgElement.style.maxWidth = '300px';  // プレビューのサイズ調整
+          previewContainer.appendChild(imgElement);
+        };
+
+        reader.readAsDataURL(file);  // ファイルをBase64でロード
+      }
+    }
+
+
+    function uploadImage() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("ファイルを選択してください。");
+        return;
+      }
+
+      // ファイルのサイズ及び形式チェック
+      const maxSize = 100 * 1024; // 100KB以下
+      const allowedTypes = ['image/jpeg', 'image/png'];
+
+      if (file.size > maxSize) {
+        alert("ファイルの容量は100KB以下にしてください。");
+        return;
+      }
+
+      if (!allowedTypes.includes(file.type)) {
+        alert("JPGまたはPNG形式のファイルのみアップロード可能です。");
+        return;
+      }
+
+      // 変更確認
+      const confirmChange = confirm("画像を変更しますか？");
+      if (confirmChange) {
+        
+      } else {
+        event.preventDefault();  // POSTリクエストを防止
+        return;
+      }
+    }
+  </script>
+
+</body>
+
+</html>

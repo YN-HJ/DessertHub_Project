@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新しい投稿</title>
+
+    <link rel="stylesheet" href="/css/general.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+    <link rel="stylesheet" href="/css/fragments/nav.css">
+    <link rel="stylesheet" href="/css/fragments/footer.css">
+    <link rel="stylesheet" href="/css/board/new.css">
+</head>
+
+<body>
+
+    <!-- ヘッダー -->
+    <header th:replace="fragments/header.html :: header"></header>
+
+    <main>
+        <!-- サイドバー -->
+        <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+        <div class="container">
+            <h2>
+                掲示板投稿
+            </h2>
+
+            <form action="/board/upload" th:object="${board}" method="post">
+                <div class="form-group">
+                    <label for="category">カテゴリー</label>
+                    <select id="category" th:field="*{boardCategory}">
+                        <option value="notice" th:if="${session.userId == 1}">お知らせ</option>
+                        <option value="free">自由掲示板</option>
+                        <option value="qna">Q&A</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">タイトル</label>
+                    <input type="text" id="title" th:field="*{boardTitle}" placeholder="タイトル入力">
+                </div>
+
+                <label for="content">内容</label>
+                <div class="form-group" style="display: flex; align-items: flex-start; gap: 10px;">
+                    <textarea id="content" th:field="*{boardContent}" placeholder="内容入力" style="flex-grow: 1;"></textarea>
+
+                    <!-- プレビューの表示領域 -->
+                    <div id="previewContainer" style="display: none; max-width: 100%; overflow: hidden; margin-top: 10px;">
+                        <img id="preview-image" src="" alt="アップロード画像プレビュー" style="max-width: 100%; max-height: 200px; height: auto; width: auto;">
+                    </div>
+                </div>
+                <div class="divider"></div>
+                
+                <div class="media-buttons">
+                    <button type="button" id="upload-photo">画像アップロード</button>
+                    <input type="file" id="photo-input" accept="image/*" style="display: none;" onchange="encodeImage(event)">
+                </div>
+
+
+                <!-- 隠しフィールドにBase64画像データ保存 -->
+                <input type="hidden" id="encodedImage" name="encodedImage" th:field="*{boardImg}">
+
+                <div class="button-group">
+                    <button type="button" id="cancleNewBoard" onclick="goBack()">キャンセル</button>
+                    <button type="submit" id="submit-post">登録</button>
+                </div>
+        </div>
+
+    </main>
+
+
+    <!-- フッター -->
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+    
+    <script>
+        // キャンセルクリック時に前のページに戻る
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    
+    <script>
+
+        // 画像選択時にBase64にエンコードし、隠しフィールドに設定
+        function encodeImage(event) {
+            var file = event.target.files[0];  // ファイル入力で選択された一番目のファイルをロード
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    // Base64でエンコードされたデータ
+                    var base64data = reader.result;
+
+                    // 隠し入力フィールドにBase64のデータ設定
+                    document.getElementById('encodedImage').value = base64data;
+
+                    // プレビューの画像表示
+                    var previewContainer = document.getElementById('previewContainer');
+                    previewContainer.style.display = 'block'; // プレビュー領域を可視化
+                    var imgElement = document.getElementById('preview-image');
+                    imgElement.src = base64data; // プレビューを設定
+
+                    // プレビュー領域表示
+                    previewContainer.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);  // ファイルをBase64でロード
+            }
+        }
+
+        // 「画像アップロード」クリック時にファイル選択ウィンドウを表示
+        document.getElementById('upload-photo').addEventListener('click', function (event) {
+            //evetn.preventDefault();
+            document.getElementById('photo-input').click();
+        });
+    </script>
+
+</body>
+
+</html>

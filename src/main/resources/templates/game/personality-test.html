@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>性格テスト方式</title>
+  
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/fragments/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+
+
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #ffe6e6;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .container {
+      width: 80%;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #fff0f5;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #ff66b2;
+    }
+    h2 {
+      
+      color: #ff66b2;
+    }
+
+    .question {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .answer-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .answer-buttons button {
+      padding: 10px 20px;
+      background-color: #ff66b2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+
+    .answer-buttons button:hover {
+      background-color: #ff85c2;
+    }
+
+    .result-container {
+      width: 80%;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #fff0f5;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .result-container h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .result-container .result {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff66b2;
+    }
+
+    .button {
+      padding: 10px 20px;
+      background-color: #ff66b2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      margin: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: #ff85c2;
+    }
+
+    .iframe-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      height: 300px;
+      background-color: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      z-index: 1000;
+    }
+
+    .iframe-popup iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 10px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #ff66b2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <div class="main-layout">
+    <!-- サイドバー -->
+    <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+  <div class="container" id="quiz-container">
+    <h1>性格テスト方式</h1>
+    <p>あなたの性格を分析し、ピッタリなデザートをおすすめします！</p>
+
+    <!-- 質問領域 -->
+    <div id="question-container">
+      <div class="question" id="question-text"></div>
+      <div class="answer-buttons" id="answer-buttons"></div>
+    </div>
+  </div>
+
+  <!-- リザルト画面 -->
+  <div class="result-container" id="result-container">
+    <h2>おすすめデザート</h2>
+    <div class="result" id="result-text">
+      
+
+    </div>
+    <button class="button" id="retry-button">リトライ</button>
+    <button class="button" id="share-button">シェアする</button>
+    </div>
+
+  <!-- シェア -->
+  <div class="iframe-popup" id="share-popup">
+    <button class="close-btn" id="close-popup">X</button>
+    <iframe src="../sns.html"></iframe>
+  </div>
+
+  <!-- フッター -->
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+  <script>
+      // 初期変数設定
+const questions = [
+  {
+    question: "新しい人に会う時、どのように接しますか？",
+    answers: [
+      { text: "自分から積極的に話しかける。", score: 0, dessert: "dessert1"},
+      { text: "とりあえず相手の様子を伺う。", score: 16, dessert: "dessert2" }
+    ]
+  },
+  {
+    question: "計画を立てることは好きですか？",
+    answers: [
+      { text: "計画はバッチリ立てる。", score: 0, dessert: "dessert1" },
+      { text: "計画は立てず、状況によって変わる", score: 8, dessert: "dessert2" }
+    ]
+  },
+  {
+    question: "問題を解決する際、どのようにしますか？",
+    answers: [
+      { text: "論理的で分析的な解決法を好む。", score: 0, dessert: "dessert1" },
+      { text: "感情と直感による解決法を好む。", score: 4, dessert: "dessert3" }
+    ]
+  },
+  {
+    question: "趣味活動をする時、どちらを好みますか？",
+    answers: [
+      { text: "一人でも出来ることが好き。", score: 0, dessert: "dessert1" },
+      { text: "大勢で出来ることが好き。", score: 2, dessert: "dessert2" }
+    ]
+  },
+  {
+    question: "アイデアを出す時、あなたはどのようなスタイルですか？",
+    answers: [
+      { text: "単純で安全性が保証されている方を好む。", score: 0, dessert: "dessert1" },
+      { text: "より複雑で新しいものに挑戦する。", score: 1, dessert: "dessert3" }
+    ]
+  }
+
+];
+
+let currentQuestionIndex = 0;
+let dessertScores = {};
+
+// ページロード時にリザルト画面を隠す
+document.getElementById('result-container').style.display = 'none';
+
+// 質問表示
+function showQuestion() {
+  const questionElement = document.getElementById('question-text');
+  const answerButtons = document.getElementById('answer-buttons');
+
+  questionElement.innerText = questions[currentQuestionIndex].question;
+  answerButtons.innerHTML = "";
+
+  questions[currentQuestionIndex].answers.forEach(answer => {
+    const button = document.createElement('button');
+    button.innerText = answer.text;
+    button.classList.add('button');
+    button.addEventListener('click', () => selectAnswer(answer));
+    answerButtons.appendChild(button);
+  });
+}
+
+// 答え選択時
+function selectAnswer(answer) {
+  dessertScores[answer.dessert] = (dessertScores[answer.dessert] || 0) + answer.score;
+  currentQuestionIndex++;
+
+  if (currentQuestionIndex < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+// リザルト表示
+function showResult() {
+  const totalScore = Object.values(dessertScores).reduce((a, b) => a + b, 0);
+  const url = "/dessert/personality-test/"+totalScore;
+
+  fetch(url)
+  .then(response => response.json())
+  .then(dessert => {  
+    document.getElementById('result-text').innerHTML = `
+        <img src="${dessert.dessertImage}" alt="${dessert.dessertName}" style="width: 500px; height: 500px;"/>
+        <br>
+        <span>${dessert.dessertName}</span><br>
+        <span>${dessert.dessertChara}</span>
+      `;
+  })
+  .catch(error =>  {
+
+  });
+
+  document.getElementById('quiz-container').style.display = 'none'; // 質問を隠す
+  document.getElementById('result-container').style.display = 'block'; // リザルト画面表示
+}
+
+// リスタートボタン
+document.getElementById('retry-button').addEventListener('click', () => location.reload());
+
+// ウィンドウを閉じる
+document.getElementById('close-popup').addEventListener('click', () => document.getElementById('share-popup').style.display = 'none');
+
+// シェアボタン
+document.getElementById('share-button').addEventListener('click', () => document.getElementById('share-popup').style.display = 'block');
+
+// 最初の質問表示
+showQuestion();
+
+  </script>
+</body>
+</html>

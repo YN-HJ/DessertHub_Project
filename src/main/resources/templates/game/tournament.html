@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トーナメント方式</title>
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/fragments/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+
+  <style>
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      background: #fff0f5;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #ff6b81;
+      margin-bottom: 30px;
+    }
+
+    .result-container {
+      font-size: 24px;
+      color: #ff6b81;
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #ffd1dc;
+      border-radius: 10px;
+    }
+    .button {
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #ff66b2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    .button:hover {
+      background-color: #ff85c2;
+    }
+    .result-container {
+      display: none;
+    }
+    .iframe-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      height: 300px;
+      background-color: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      z-index: 1000;
+    }
+    .iframe-popup iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 10px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #ff66b2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ヘッダー -->
+<header th:replace="fragments/header.html :: header"></header>
+
+<div class="main-layout">
+  <!-- サイドバー -->
+  <nav th:replace="fragments/nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+    <div id="game-container" class="container">
+      <h1>トーナメント方式</h1>
+      <p>2つのスイーツの中で1つを選ぼう！</p>
+      <div id="round-text"></div>
+      <div id="pair-container" class="button-container">
+
+      </div>
+    </div>
+
+  <div id="result-container" class="container result-container">
+    <h1>優勝スイーツは…</h1>
+    <h2 id="result-text"></h2>
+    <button id="retry-button" class="button">リトライ</button>
+    <button id="share-button" class="button">シェアする</button>
+    
+  </div>
+
+  <!-- シェア -->
+  <div class="iframe-popup" id="share-popup">
+    <button class="close-btn" id="close-popup">X</button>
+    <iframe src="../sns.html"></iframe>
+  </div>
+  </div>
+
+  <!-- フッター -->
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+
+
+
+  <script th:inline="javascript">    
+    let desserts = /*[[${dessert}]]*/[];
+
+    let currentIndex = 0;
+    let round = 1;
+    let selectedDesserts = [];
+
+    function startGame() {
+      if (desserts.length === 1) {
+        showFinalResult(desserts[0]);
+        return;
+      }
+
+      const roundText = document.getElementById('round-text');
+      roundText.textContent = `ラウンド${round}（ベスト${desserts.length}）`;
+      showNextPair();
+    }
+
+    function showNextPair() {
+      const pairContainer = document.getElementById('pair-container');
+      pairContainer.innerHTML = '';
+
+      const dessert1 = desserts[currentIndex];
+      const dessert2 = desserts[currentIndex + 1];
+
+      const button1 = createButton(dessert1);
+      const button2 = createButton(dessert2);
+
+      pairContainer.appendChild(button1);
+      pairContainer.appendChild(button2);
+    }
+
+    function createButton(dessert) {
+      const button = document.createElement('button');
+      button.classList.add('button');    
+      
+      const img = document.createElement('img');
+      img.src = dessert.dessertImage; 
+      img.alt = dessert.dessertName;   
+      img.style.width = '400px';        
+      img.style.height = '400px';     
+      const text = document.createElement('span');  
+      button.textContent = `${dessert.dessertChara} ${dessert.dessertName}`;
+      button.appendChild(img);
+      button.appendChild(text);
+      button.addEventListener('click', () => {
+        selectedDesserts.push(dessert);
+        nextPair();
+      });
+      return button;
+    }
+
+    function nextPair() {
+      currentIndex += 2;
+
+      if (currentIndex >= desserts.length) {
+        desserts = selectedDesserts;
+        selectedDesserts = [];
+        currentIndex = 0;
+        round++;
+        startGame();
+      } else {
+        showNextPair();
+      }
+    }
+
+    function showFinalResult(dessert) {
+      document.getElementById('result-text').innerHTML = `
+        <img src="${dessert.dessertImage}" alt="${dessert.dessertName}" style="width: 500px; height: 500px;"><br>
+        ${dessert.dessertName} (${dessert.dessertChara})
+      `;
+      document.getElementById('game-container').style.display = 'none';
+      document.getElementById('result-container').style.display = 'block';
+    }
+
+    // リトライボタン
+    document.getElementById('retry-button').addEventListener('click', () => location.reload());
+
+    // シェアボタン
+    document.getElementById('share-button').addEventListener('click', () => {
+      document.getElementById('share-popup').style.display = 'block';
+    });
+    // 閉じる
+    document.getElementById('close-popup').addEventListener('click', () => {
+      document.getElementById('share-popup').style.display = 'none';
+    });
+
+    startGame();
+  </script>
+</body>
+</html>

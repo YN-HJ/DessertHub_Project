@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アカウント削除</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/fragments/header.css">
+  <link rel="stylesheet" href="/css/user/nav.css">
+  <link rel="stylesheet" href="/css/fragments/footer2.css">
+  <link rel="stylesheet" href="/css/user/delete.css">
+</head>
+
+<body>
+
+  <header th:replace="fragments/header.html :: header"></header>
+
+  <nav th:replace="user/profile/profile-nav.html :: nav" style="width: 200px; margin-right: 20px;"></nav>
+
+  <div class="mypage-container">
+    
+    <div class="container">
+      <h2 class="h2delete">アカウント削除</h2>
+
+      <p>全てのデータが削除されます。本当にアカウント削除しますか？</p>
+
+      <form id="profileDeleteForm" action="/user/delete" th:object="${user}" method="get">
+        <label for="userId">ID</label>
+        <input type="text" id="userId" th:field="*{userId}" placeholder="ID入力">
+
+        <label for="password">パスワード</label>
+        <input type="password" id="password" th:field="*{userPw}" placeholder="パスワード入力">
+
+        <label for="confirm-password">パスワード確認</label>
+        <input type="password" id="confirm-password" placeholder="パスワード確認">
+        <p id="password-feedback"></p>
+
+        <button type="button" class="button" onclick="confirmDeactivation()">アカウント削除</button>
+
+      </form>
+
+
+      <div class="info">
+        <p>削除後の復元は不可能です。</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer th:replace="fragments/footer.html :: footer"></footer>
+
+  <script>
+    // パスワード確認
+    function validatePassword() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const feedback = document.getElementById('password-feedback');
+      if (password === confirmPassword) {
+        feedback.textContent = 'パスワードが一致します。';
+        feedback.style.color = 'green';
+      } else {
+        feedback.textContent = 'パスワードが一致しません。';
+        feedback.style.color = 'red';
+      }
+    }
+
+    document.getElementById('confirm-password').addEventListener('input', validatePassword);
+
+    // 削除ボタンクリック時の確認ウィンドウ表示処理
+    function confirmDeactivation() {
+      const userId = document.getElementById('userId').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      if (!userId || !password || !confirmPassword) {
+        alert('全ての項目を入力してください。');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('パスワードが一致しません。');
+        return;
+      }
+
+      const confirmDeactivation = confirm("アカウントを削除しますか？");
+      if (confirmDeactivation) {
+        document.getElementById("profileDeleteForm").submit();
+      } else {
+        alert("キャンセルしました。");
+        event.preventDefault();
+        return;
+      }
+    }
+  </script>
+
+</body>
+
+</html>

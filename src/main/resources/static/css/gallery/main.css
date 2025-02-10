@@ -1,0 +1,280 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.photo-item {
+    cursor: pointer;
+    text-align: center;
+    width: 200px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.photo-grid img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.photo-grid img:hover {
+    transform: scale(1.05);
+}
+
+.info {
+    margin: 50px auto;
+    padding: 30px;
+}
+
+.register-btn {
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #ff9a9e, #fecfef);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 30px;
+    text-align: center;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* モーダルスタイル */
+.modal {
+    display: none;
+    position: fixed;
+
+    top: 50%;
+    /* 画面の中央に位置 */
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    /* 水平、垂直で中央に整列 */
+    width: 700px;
+    /* 横幅の固定 */
+    height: 600px;
+    /* 高さの固定 */
+
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    /* 他のコンテンツの上に表示 */
+    display: flex;
+    justify-content: center;
+    /* 画像が中央に配置されるよう設定 */
+    align-items: center;
+    /* 画像が中央に配置されるよう設定 */
+}
+
+.modal-title {
+    margin: 10px 0 5px;
+    font-size: 20px;
+}
+
+.modal-hashtags {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.modal-content img {
+
+    max-width: 100%;
+    /* 画像がモーダルをはみ出さないように */
+    max-height: 100%;
+    /* はみ出し防止 */
+    object-fit: contain;
+    /* 画像の比率を維持しながら大きさを調節 */
+
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.modal .slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 5px;
+}
+
+.modal .prev-btn {
+    left: 10px;
+}
+
+.modal .next-btn {
+    right: 10px;
+}
+
+.like-btn {
+    background-color: #838383;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.like-btn:hover {
+    background-color: #ff4b4b;
+}
+
+.unlike-btn {
+    background-color: #ff2323;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.unlike-btn:hover {
+    background-color: #ff9292;
+}
+
+.close-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.close-btn:hover {
+    background-color: #45a049;
+}
+
+@keyframes burst {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(0, -20px) scale(1.8);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translate(0, -40px) scale(2.5);
+        opacity: 0;
+    }
+}
+
+
+.modal .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal .actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.modal .like-btn {
+    background-color: #ff6f61;
+    color: white;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal .like-btn.liked {
+    background-color: #e84142;
+}
+
+.modal .like-btn::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: 50%;
+    left: 50%;
+    background: rgba(161, 161, 161, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    opacity: 1;
+}
+
+
+.modal .like-btn.liked::after {
+    content: '\2665';
+    position: absolute;
+    font-size: 20px;
+    color: #e84142;
+    animation: burst 0.6s ease-out;
+}
+
+.modal-hashtags-container {
+    display: flex;
+    justify-content: center;
+    /* 画像が中央に配置されるよう設定 */
+    align-items: center;
+    /* 画像が中央に配置されるよう設定 */
+}
+
+.hashtag {
+    background: #ff9a9e;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;       /* インラインブロックで表示 */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: transform 0.3s ease; /* マウスホバー時にアニメーション */
+}
+
+.hashtag:hover {
+    transform: scale(1.1);       /* マウスを近づけると拡大 */
+    cursor: pointer;            /* マウスを近づけるとカーソルが手の形になる */
+}

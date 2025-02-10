@@ -1,0 +1,126 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+    display: flex;
+}
+
+.form-container {
+    flex: 1;
+    padding: 40px;
+    transition: all 0.6s ease-in-out;
+    text-align: center;
+}
+
+.form-container h1 {
+    font-weight: bold;
+    color: #6c63ff;
+    margin-bottom: 20px;
+}
+
+input,
+select {
+    margin: 10px 0;
+    padding: 12px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+}
+
+.email-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.inline-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+button {
+    margin-top: 20px;
+    border-radius: 25px;
+    border: 1px solid #6c63ff;
+    background-color: #6c63ff;
+    color: #FFFFFF;
+    padding: 12px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.check-btn {
+    margin: 5px;
+    padding: 5px 15px;
+    /* 更に小さいサイズ設定 */
+    font-size: 10px;
+    /* 文字のサイズ調節 */
+    border-radius: 25px;
+}
+
+button:hover {
+    background: #a6c1ee;
+    transform: scale(1.05);
+}
+
+.overlay-container {
+    background: linear-gradient(to right, #a6c1ee, #fbc2eb);
+    color: #FFFFFF;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+}
+
+.overlay-container button {
+    margin-top: 15px;
+    background: transparent;
+    border: 1px solid #FFFFFF;
+    padding: 12px 20px;
+    border-radius: 25px;
+    color: white;
+}
+
+.overlay-container button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.valid {
+    color: green;
+}
+
+.invalid {
+    color: red;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+}

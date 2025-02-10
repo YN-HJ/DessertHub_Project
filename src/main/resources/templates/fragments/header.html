@@ -1,0 +1,28 @@
+<header th:fragment="header">
+    <div class="logo">
+        <a href="/home" class="no-underline">Dessert Hub</a>
+    </div>
+
+    <!-- 非ログイン状態ならログインボタンを表示 -->
+    <div class="auth-buttons" th:unless="${session.userId}">
+        <a href="/user/login">
+            <button>Login</button>
+        </a>
+    </div>
+
+    <!-- ログイン状態であればログイン情報を表示 -->
+    <div class="auth-buttons" th:if="${session.userId}">
+        <button>
+            <span th:text="${session.userNn}"></span>
+        </button>
+        <button>
+            <a href="/user/profile" class="no-underline">
+                マイページ
+            </a>
+            <span> / </span>
+            <a href="/user/logout" class="no-underline">
+                Logout
+            </a>
+        </button>
+    </div>
+</header>

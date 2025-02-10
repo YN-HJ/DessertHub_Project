@@ -1,0 +1,112 @@
+/* 전역 설정 */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(to right, #FFE4E1, #FFB6A0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: 0;
+}
+
+/* コンテナ */
+.container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+    display: flex;
+}
+
+/* フォームのスタイル */
+.form-container {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    font-weight: bold;
+    color: #FF6B81;
+    margin-bottom: 20px;
+}
+
+input {
+    margin: 10px 0;
+    padding: 12px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+}
+
+button {
+    border-radius: 20px;
+    border: 1px solid #FF6B81;
+    background-color: #FF6B81;
+    color: #FFFFFF;
+    padding: 12px 45px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background: #FFA07A;
+    transform: scale(1.05);
+}
+
+/* 転換ボタンコンテナ */
+.overlay-container {
+    background: linear-gradient(to right, #FFB6A0, #FFDEAD);
+    color: #FFFFFF;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.overlay-container h1 {
+    margin-bottom: 30px;
+}
+
+.overlay-container button {
+    background: transparent;
+    border: 1px solid #FFFFFF;
+    padding: 12px 20px;
+    margin: 10px 0;
+    border-radius: 30px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.overlay-container button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* 反応型の処理 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .form-container,
+    .overlay-container {
+        width: 100%;
+    }
+}

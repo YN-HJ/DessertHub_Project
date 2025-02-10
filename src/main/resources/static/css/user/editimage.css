@@ -1,0 +1,51 @@
+.container h2 {
+    color: #f06292;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 400px;
+}
+
+/* プロフィール画像を中央に配置 */
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #ddd;
+    margin: 0 auto 20px;
+    /* 水平で中央に整列 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5d4037;
+    font-size: 16px;
+}
+
+.file-input {
+    display: none;
+}
+
+.upload-btn {
+    background-color: #f06292;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.upload-btn:hover {
+    background-color: #e91e63;
+}
+
+.info {
+    font-size: 14px;
+    color: #9e9e9e;
+    margin-top: 10px;
+}

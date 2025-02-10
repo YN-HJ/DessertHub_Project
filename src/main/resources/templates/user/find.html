@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ID・パスワードを探す</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,800" rel="stylesheet">
+  <link rel="stylesheet" href="/css/user/find.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- IDを探す -->
+    <div class="form-container" id="find-id">
+      <form id="findIdForm" action="/user/find-id" method="post" th:object="${user}">
+        <h1>IDをお忘れの方</h1>
+        <input type="text" id="nickname" placeholder="ニックネーム" th:field="*{userNn}" required>
+        <input type="email" id="email-id" placeholder="メールアドレス" th:field="*{userEm}" required>
+        <small id="idResult"></small>
+        <br>
+        <button type="button" id="findIdBtn">確認</button>
+        <a href="/user/login">
+          <button type="button">ログインする</button>
+        </a>
+      </form>
+    </div>
+
+    <!-- パスワードを探す -->
+    <div class="form-container" id="find-password" style="display:none;">
+      <form id="findPwForm" action="/user/find-pw" method="post" th:object="${user}">
+        <h1>パスワードをお忘れの方</h1>
+        <input type="text" id="username" placeholder="ID" required>
+        <input type="email" id="email-password" placeholder="メールアドレス" required>
+        <small id="pwResult"></small>
+        <br>
+        <button type="button" id="findPwBtn">確認</button>
+        <a href="/user/login">
+          <button type="button" id="findIdBtn">ログインする</button>
+        </a>
+      </form>
+    </div>
+
+    <!-- 切り替えボタン -->
+    <div class="overlay-container">
+      <button id="switch-to-password">パスワードをお忘れの方</button>
+      <button id="switch-to-id" style="display:none;">IDをお忘れの方</button>
+    </div>
+  </div>
+
+  <script>
+    // フォーム切り替え
+    const idForm = document.getElementById('find-id');
+    const passwordForm = document.getElementById('find-password');
+    const switchToPassword = document.getElementById('switch-to-password');
+    const switchToId = document.getElementById('switch-to-id');
+
+    switchToPassword.addEventListener('click', () => {
+      idForm.style.display = 'none';
+      passwordForm.style.display = 'flex';
+      switchToPassword.style.display = 'none';
+      switchToId.style.display = 'block';
+    });
+
+    switchToId.addEventListener('click', () => {
+      passwordForm.style.display = 'none';
+      idForm.style.display = 'flex';
+      switchToPassword.style.display = 'block';
+      switchToId.style.display = 'none';
+    });
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      // IDを探すボタンクリック時のイベント
+      $('#findIdBtn').click(function () {
+        var nickname = $('#nickname').val().trim();
+        var email = $('#email-id').val().trim();
+
+        // 入力必須フィールド検証
+        if (nickname === "" || email === "") {
+          alert("ニックネームとメールアドレス両方を入力してください。");
+          return;
+        }
+
+        // Ajaxリクエスト送信
+        $.ajax({
+          url: '/user/find-id',  // リクエストするURL
+          method: 'POST',
+          data: {
+            userNn: nickname,   // ニックネーム
+            userEm: email       // メールアドレス
+          },
+          success: function (response) {
+            // サーバーから送信された結果によって処理
+            if (response.success) {
+              $('#idResult').text('あなたのID：' + response.userId).css('color', 'green');
+            } else {
+              $('#idResult').text('入力情報に該当するIDが存在しません。').css('color', 'red');
+            }
+          },
+          error: function () {
+            alert("サーバーエラーが発生しました。");
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      // パスワードを探すボタンクリック時のイベント
+      $('#findPwBtn').click(function () {
+        var username = $('#username').val().trim();
+        var email = $('#email-password').val().trim();
+
+        // 入力必須フィールド検証
+        if (username === "" || email === "") {
+          alert("IDとメールアドレス両方を入力してください。");
+          return;
+        }
+
+        // Ajaxリクエスト送信
+        $.ajax({
+          url: '/user/find-pw',  // リクエストするURL
+          method: 'POST',
+          data: {
+            userId: username,    // ID
+            userEm: email        // メールアドレス
+          },
+          success: function (response) {
+            // サーバーから送信された結果によって処理
+            if (response.success) {
+              $('#pwResult').text('あなたのパスワード：' + response.userPw).css('color', 'green');
+            } else {
+              $('#pwResult').text('入力情報に該当するアカウントが存在しません。').css('color', 'red');
+            }
+          },
+          error: function () {
+            alert("サーバーエラーが発生しました。");
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
